@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Steal Vape - Premium Vape Store dengan koleksi lengkap dan harga terbaik">
+    <meta name="keywords" content="vape, vape store, pod system, mod box, liquid vape">
+    <title>Steal Vape - Premium Vape Store</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <img src="assets/images/logo.jpg" alt="Steal Vape Logo" class="logo-img">
+                <span class="logo-text">STEAL VAPE</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1>Premium Vape Experience</h1>
+            <p>Temukan koleksi vape terbaik dengan kualitas premium dan harga terjangkau. Steal Vape - Your Trusted Vape Partner</p>
+            <div class="cta-buttons">
+                <a href="#products" class="btn btn-primary">
+                    <span>🛒</span> Lihat Produk
+                </a>
+                <a href="https://wa.me/6282114723789?text=Halo%20Steal%20Vape%2C%20saya%20ingin%20bertanya%20tentang%20produk%20vape" class="btn btn-secondary" target="_blank">
+                    <span>💬</span> Chat WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vape Background Effect -->
+    <div class="vape-bg" id="vapeBg"></div>
+
+    <!-- Featured Products -->
+    <section class="featured-section" id="products">
+        <div class="section-header">
+            <h2>Featured Products</h2>
+            <p>Koleksi terbaik pilihan kami untuk Anda</p>
+        </div>
+        <div class="products-container">
+            <div class="product-card">
+                <div class="product-img">💨</div>
+                <div class="product-info">
+                    <h3 class="product-name">Pod System Premium</h3>
+                    <p class="product-desc">Pod system berkualitas tinggi dengan desain elegan dan performa maksimal</p>
+                    <div class="product-price">Rp 350.000</div>
+                    <button class="product-btn" onclick="orderWhatsApp('Pod System Premium', 'Rp 350.000')">
+                        <span>🛒</span> Pesan Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">⚡</div>
+                <div class="product-info">
+                    <h3 class="product-name">Mod Box Elite</h3>
+                    <p class="product-desc">Mod box dengan teknologi terbaru dan battery life yang panjang</p>
+                    <div class="product-price">Rp 750.000</div>
+                    <button class="product-btn" onclick="orderWhatsApp('Mod Box Elite', 'Rp 750.000')">
+                        <span>🛒</span> Pesan Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">🌈</div>
+                <div class="product-info">
+                    <h3 class="product-name">Liquid Premium Mix</h3>
+                    <p class="product-desc">Berbagai pilihan rasa premium dengan kualitas terjamin</p>
+                    <div class="product-price">Rp 80.000</div>
+                    <button class="product-btn" onclick="orderWhatsApp('Liquid Premium Mix', 'Rp 80.000')">
+                        <span>🛒</span> Pesan Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">🔥</div>
+                <div class="product-info">
+                    <h3 class="product-name">Coil Replacement</h3>
+                    <p class="product-desc">Coil replacement berkualitas untuk berbagai jenis device</p>
+                    <div class="product-price">Rp 45.000</div>
+                    <button class="product-btn" onclick="orderWhatsApp('Coil Replacement', 'Rp 45.000')">
+                        <span>🛒</span> Pesan Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">💎</div>
+                <div class="product-info">
+                    <h3 class="product-name">Disposable Vape</h3>
+                    <p class="product-desc">Praktis dan siap pakai dengan berbagai pilihan flavor</p>
+                    <div class="product-price">Rp 120.000</div>
+                    <button class="product-btn" onclick="orderWhatsApp('Disposable Vape', 'Rp 120.000')">
+                        <span>🛒</span> Pesan Sekarang
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">⭐</div>
+                <div class="product-info">
+                    <h3 class="product-name">Starter Kit Bundle</h3>
+                    <p class="product-desc">Paket lengkap untuk pemula dengan harga spesial</p>
+                    <div class="product-price">Rp 450.000</div>
+                    <button class="product-btn" onclick="orderWhatsApp('Starter Kit Bundle', 'Rp 450.000')">
+                        <span>🛒</span> Pesan Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-container">
+            <div class="about-content">
+                <h2>Tentang Steal Vape</h2>
+                <p>Steal Vape adalah toko vape terpercaya yang menyediakan produk-produk vape berkualitas tinggi dengan harga yang kompetitif.</p>
+                <p>Kami berkomitmen untuk memberikan pengalaman vaping terbaik dengan menyediakan berbagai pilihan device, liquid, dan aksesoris dari brand-brand ternama.</p>
+                <p>Dengan pelayanan profesional dan produk original, kami siap menjadi partner terpercaya untuk kebutuhan vaping Anda.</p>
+            </div>
+            <div class="about-img">
+                <img src="assets/images/logo.jpg" alt="Steal Vape" class="about-logo">
+            </div>
+        </div>
+    </section>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/6282114723789?text=Halo%20Steal%20Vape%2C%20saya%20ingin%20bertanya%20tentang%20produk%20vape" target="_blank" class="whatsapp-float" title="Chat WhatsApp">
+        <svg viewBox="0 0 32 32">
+            <path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-4.713 1.262 1.262-4.669-0.292-0.508c-1.207-2.100-1.847-4.507-1.847-6.967 0-7.51 6.11-13.62 13.62-13.62s13.62 6.11 13.62 13.62-6.11 13.62-13.62 13.62zM21.305 19.26c-0.346-0.174-2.049-1.007-2.366-1.123-0.316-0.117-0.547-0.174-0.776 0.174s-0.892 1.123-1.094 1.347c-0.201 0.229-0.401 0.257-0.748 0.083-0.346-0.174-1.461-0.539-2.785-1.722-1.031-0.922-1.727-2.061-1.929-2.407-0.201-0.346-0.022-0.532 0.152-0.704 0.156-0.155 0.346-0.401 0.518-0.603 0.174-0.201 0.229-0.346 0.346-0.575 0.117-0.229 0.058-0.429-0.028-0.603s-0.776-1.87-1.063-2.565c-0.28-0.672-0.56-0.58-0.776-0.591-0.201-0.010-0.429-0.012-0.659-0.012s-0.603 0.083-0.92 0.429c-0.316 0.346-1.206 1.179-1.206 2.873s1.235 3.333 1.406 3.561c0.174 0.229 2.421 3.698 5.863 5.186 0.818 0.354 1.456 0.565 1.953 0.722 0.821 0.262 1.569 0.225 2.16 0.136 0.659-0.099 2.049-0.837 2.335-1.645s0.287-1.501 0.201-1.645c-0.083-0.146-0.316-0.229-0.659-0.401z"/>
+        </svg>
+    </a>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <img src="assets/images/logo.jpg" alt="Steal Vape" class="footer-logo">
+            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">STEAL VAPE</h3>
+            <p>Premium Vape Store</p>
+            <p>📱 WhatsApp: +62 821-1472-3789</p>
+            <p>📧 Email: info@stealvape.com</p>
+            <div class="social-links">
+                <a href="https://wa.me/6282114723789" target="_blank">📱</a>
+                <a href="#" target="_blank">📷</a>
+                <a href="#" target="_blank">👤</a>
+            </div>
+            <p style="margin-top: 2rem; opacity: 0.5;">© 2024 Steal Vape. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
