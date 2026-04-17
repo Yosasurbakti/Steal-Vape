@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Steal Vape - Premium Vape Store dengan koleksi lengkap dan harga terbaik">
+    <meta name="keywords" content="vape, vape store, liquid vape, foom, flood, steal vape atambua">
+    <title>Steal Vape - Premium Vape Store</title>
+    <meta name="google-site-verification" content="B2aNflM98jmq7QqqxzNj0P4HP8YpRretd1LRk0fA1wI" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ===== CART STYLES ===== */
+        .nav-container { display: flex; align-items: center; }
+
+        .cart-nav-btn {
+            position: relative;
+            margin-left: 1.5rem;
+            background: rgba(168,85,247,0.15);
+            border: 1.5px solid rgba(168,85,247,0.4);
+            color: #fff;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+        .cart-nav-btn:hover {
+            background: rgba(168,85,247,0.3);
+            box-shadow: 0 0 18px rgba(168,85,247,0.5);
+            transform: scale(1.05);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 10px; font-weight: 700;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: none;
+            align-items: center; justify-content: center;
+            border: 2px solid #0d0f1a;
+        }
+
+        /* OVERLAY */
+        .cart-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 9998;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .cart-overlay.open { opacity: 1; pointer-events: all; }
+
+        /* SIDEBAR */
+        .cart-sidebar {
+            position: fixed;
+            top: 0; right: -440px;
+            width: 420px; height: 100vh;
+            background: #0b0d17;
+            border-left: 1px solid rgba(168,85,247,0.2);
+            z-index: 9999;
+            display: flex; flex-direction: column;
+            transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: -8px 0 40px rgba(0,0,0,0.6);
+        }
+        .cart-sidebar.open { right: 0; }
+
+        .cart-head {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(168,85,247,0.15);
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(168,85,247,0.05);
+        }
+
+        .cart-head-title {
+            font-size: 1rem; font-weight: 700;
+            color: #fff; letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .cart-head-count {
+            background: rgba(168,85,247,0.2);
+            border: 1px solid rgba(168,85,247,0.3);
+            color: #a855f7;
+            font-size: 0.7rem; font-weight: 700;
+            padding: 2px 8px; border-radius: 10px;
+            letter-spacing: 1px;
+        }
+
+        .cart-close-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+            width: 32px; height: 32px;
+            border-radius: 50%; cursor: pointer;
+            font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .cart-close-btn:hover { background: rgba(239,68,68,0.15); color: #ef4444; border-color: rgba(239,68,68,0.3); }
+
+        /* CART BODY */
+        .cart-body {
+            flex: 1; overflow-y: auto;
+            padding: 1rem;
+        }
+        .cart-body::-webkit-scrollbar { width: 3px; }
+        .cart-body::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 2px; }
+
+        /* EMPTY STATE */
+        .cart-empty {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100%; gap: 1rem;
+            color: #475569; text-align: center;
+            padding: 2rem;
+        }
+        .cart-empty-ico { font-size: 4rem; opacity: 0.3; }
+        .cart-empty h3 { font-size: 1rem; color: #64748b; font-weight: 600; }
+        .cart-empty p { font-size: 0.85rem; color: #475569; line-height: 1.6; }
+
+        /* CART ITEM */
+        .cart-item {
+            display: flex; gap: 0.75rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(168,85,247,0.1);
+            border-radius: 10px;
+            padding: 0.9rem;
+            margin-bottom: 0.65rem;
+            transition: border-color 0.2s;
+            animation: itemIn 0.3s ease;
+        }
+        .cart-item:hover { border-color: rgba(168,85,247,0.25); }
+
+        @keyframes itemIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cart-item-thumb {
+            width: 64px; height: 64px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            overflow: hidden; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .cart-item-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+
+        .cart-item-body { flex: 1; min-width: 0; }
+
+        .cart-item-name {
+            font-size: 0.82rem; font-weight: 600;
+            color: #e2e8f0; line-height: 1.3;
+            margin-bottom: 3px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .cart-item-price {
+            font-size: 0.78rem; color: #a855f7;
+            font-weight: 700; margin-bottom: 8px;
+        }
+
+        .cart-item-row {
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .qty-wrap {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 6px; overflow: hidden;
+        }
+
+        .qty-btn {
+            width: 28px; height: 28px;
+            background: transparent;
+            border: none; color: #a855f7;
+            font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: background 0.15s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .qty-btn:hover { background: rgba(168,85,247,0.15); }
+
+        .qty-val {
+            min-width: 28px; text-align: center;
+            font-size: 0.85rem; font-weight: 700;
+            color: #fff;
+            border-left: 1px solid rgba(168,85,247,0.2);
+            border-right: 1px solid rgba(168,85,247,0.2);
+            padding: 0 4px;
+        }
+
+        .cart-item-sub {
+            margin-left: auto;
+            font-size: 0.78rem; font-weight: 700;
+            color: #22d3ee; white-space: nowrap;
+        }
+
+        .cart-del-btn {
+            background: transparent; border: none;
+            color: #475569; cursor: pointer;
+            font-size: 0.9rem; padding: 4px;
+            transition: color 0.2s; flex-shrink: 0;
+            align-self: flex-start;
+        }
+        .cart-del-btn:hover { color: #ef4444; }
+
+        /* CART FOOTER */
+        .cart-foot {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid rgba(168,85,247,0.12);
+            background: rgba(0,0,0,0.25);
+        }
+
+        .cart-summary { margin-bottom: 1rem; }
+
+        .summary-row {
+            display: flex; justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .summary-row span:first-child { color: #64748b; font-size: 0.82rem; }
+        .summary-row span:last-child { color: #cbd5e1; font-size: 0.82rem; font-weight: 600; }
+
+        .summary-divider {
+            border: none; border-top: 1px dashed rgba(168,85,247,0.15);
+            margin: 10px 0;
+        }
+
+        .total-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .total-label { color: #fff; font-size: 0.95rem; font-weight: 700; letter-spacing: 1px; }
+        .total-val {
+            font-size: 1.15rem; font-weight: 900;
+            background: linear-gradient(135deg, #a855f7, #22d3ee);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .checkout-wa-btn {
+            width: 100%; padding: 0.95rem;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            color: #fff; border: none; border-radius: 8px;
+            font-size: 0.9rem; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            cursor: pointer; transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            box-shadow: 0 4px 20px rgba(34,197,94,0.25);
+            margin-bottom: 0.65rem;
+        }
+        .checkout-wa-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(34,197,94,0.4); }
+
+        .clear-cart-btn {
+            width: 100%; padding: 0.6rem;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.07);
+            color: #475569; border-radius: 6px;
+            font-size: 0.78rem; cursor: pointer;
+            transition: all 0.2s; letter-spacing: 1px;
+        }
+        .clear-cart-btn:hover { color: #ef4444; border-color: rgba(239,68,68,0.25); }
+
+        /* ADD TO CART BTN ON PRODUCT */
+        .product-card-btns {
+            display: flex; gap: 8px; margin-top: 10px;
+        }
+
+        .btn-order {
+            flex: 1; padding: 9px 12px;
+            background: linear-gradient(135deg, #7c3aed, #0891b2);
+            color: #fff; border: none; border-radius: 6px;
+            font-size: 0.78rem; font-weight: 700;
+            cursor: pointer; transition: all 0.25s;
+            letter-spacing: 1px;
+        }
+        .btn-order:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(124,58,237,0.4); }
+
+        .btn-add-cart {
+            flex: 1; padding: 9px 12px;
+            background: rgba(168,85,247,0.1);
+            border: 1.5px solid rgba(168,85,247,0.35);
+            color: #a855f7; border-radius: 6px;
+            font-size: 0.78rem; font-weight: 700;
+            cursor: pointer; transition: all 0.25s;
+            letter-spacing: 1px;
+        }
+        .btn-add-cart:hover { background: rgba(168,85,247,0.2); border-color: rgba(168,85,247,0.6); transform: translateY(-1px); }
+        .btn-add-cart.added { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.4); color: #22c55e; }
+
+        /* TOAST */
+        .toast-notif {
+            position: fixed; bottom: 1.5rem; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(15,18,30,0.96);
+            border: 1px solid rgba(168,85,247,0.3);
+            color: #e2e8f0; padding: 0.7rem 1.5rem;
+            border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+            z-index: 99999; transition: transform 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .toast-notif.show { transform: translateX(-50%) translateY(0); }
+
+        @media(max-width:600px) {
+            .cart-sidebar { width: 100%; right: -100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast-notif" id="toastNotif"></div>
+
+<!-- OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-head">
+        <div class="cart-head-title">
+            🛒 Keranjang
+            <span class="cart-head-count" id="cartHeadCount">0 item</span>
+        </div>
+        <button class="cart-close-btn" onclick="closeCart()">✕</button>
+    </div>
+
+    <div class="cart-body" id="cartBody">
+        <div class="cart-empty" id="cartEmpty">
+            <div class="cart-empty-ico">🛒</div>
+            <h3>Keranjang Masih Kosong</h3>
+            <p>Tambahkan produk ke keranjang untuk mulai belanja</p>
+        </div>
+    </div>
+
+    <div class="cart-foot" id="cartFoot" style="display:none;">
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Total Produk</span>
+                <span id="summaryItems">0 item</span>
+            </div>
+            <div class="summary-row">
+                <span>Total Qty</span>
+                <span id="summaryQty">0 pcs</span>
+            </div>
+            <hr class="summary-divider">
+            <div class="total-row">
+                <span class="total-label">TOTAL BAYAR</span>
+                <span class="total-val" id="summaryTotal">Rp 0</span>
+            </div>
+        </div>
+        <button class="checkout-wa-btn" onclick="checkoutWA()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Pesan via WhatsApp
+        </button>
+        <button class="clear-cart-btn" onclick="clearCart()">🗑️ Kosongkan Keranjang</button>
+    </div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="nav-container">
+        <div class="logo">
+            <img src="images_logo_steal_vape.jpg" alt="Steal Vape Logo" class="logo-img">
+            <span class="logo-text">STEAL VAPE</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="cart-nav-btn" onclick="openCart()">
+            🛒
+            <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-logo-watermark">
+        <img src="images_logo_steal_vape.jpg" alt="logo">
+    </div>
+    <div class="hero-content">
+        <h1>Premium Vape Experience</h1>
+        <p>Level up your puff without breaking the bank! 💸 ✨
+Premium Quality Only 100%🔥
+Harga paling masuk akal se-Atambua 🚀
+            Temukan koleksi vape terbaik dengan kualitas premium dan harga terjangkau. Steal Vape - Your Trusted Vape Partner</p>
+        <div class="cta-buttons">
+            <a href="#products" class="btn btn-primary"><span>🛒</span> Lihat Produk</a>
+            <a href="https://wa.me/6282114723789?text=Halo%20Steal%20Vape%2C%20saya%20ingin%20bertanya%20tentang%20produk%20vape" class="btn btn-secondary" target="_blank"><span>💬</span> Chat WhatsApp</a>
+        </div>
+    </div>
+</section>
+
+<div class="vape-bg" id="vapeBg"></div>
+
+<!-- PRODUCTS -->
+<section class="featured-section" id="products">
+    <div class="section-header">
+        <h2>Featured Products</h2>
+        <p>Koleksi terbaik pilihan kami untuk Anda</p>
+    </div>
+    <div class="products-container">
+
+        <!-- 1. Cartridge OXVA -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/catridge.jfif" alt="Cartridge OXVA Xlim" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Cartridge OXVA Xlim</h3>
+                <p class="product-desc">Cartridge OXVA Xlim berkualitas tinggi, cocok untuk berbagai jenis pod system</p>
+                <div class="product-price">Rp 45.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Cartridge OXVA Xlim','Rp 45.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Cartridge OXVA Xlim',45000,'images/catridge.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Cartridge Ursa -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/cartridge_ursa.jfif" alt="Cartridge Ursa" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Cartridge Ursa</h3>
+                <p class="product-desc">URSA V3 Varian terbaru dari URSA, performa terbaik untuk pod kamu</p>
+                <div class="product-price">Rp 45.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Cartridge Ursa','Rp 45.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Cartridge Ursa',45000,'images/cartridge_ursa.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Blackcurrant Lychee Tea -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom__blackcurrant_lychee_tea.jfif" alt="Flood Blackcurrant Lychee Tea" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Flood Blackcurrant Lychee Tea</h3>
+                <p class="product-desc">Perpaduan blackcurrant & lychee dalam balutan fruit tea yang menyegarkan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Flood Blackcurrant Lychee Tea','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Flood Blackcurrant Lychee Tea',115000,'images/foom__blackcurrant_lychee_tea.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Green Kiwi -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_green_kiwi.jfif" alt="Foom Green Kiwi" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Green Kiwi</h3>
+                <p class="product-desc">Sensasi kiwi segar yang memanjakan dengan rasa buah yang autentik</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Green Kiwi','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Green Kiwi',115000,'images/foom_green_kiwi.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Iced Lychee Tea -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_iced_lychee_tea.jfif" alt="Foom Iced Lychee Tea" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Iced Lychee Tea</h3>
+                <p class="product-desc">Teh lychee dingin yang menyegarkan, sempurna untuk hari yang panas</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Iced Lychee Tea','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Iced Lychee Tea',115000,'images/foom_iced_lychee_tea.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Iced Tea -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_iced_tea.jfif" alt="Foom Iced Tea" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Iced Tea</h3>
+                <p class="product-desc">Rasa teh es klasik yang segar dan ringan di setiap hisapan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Iced Tea','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Iced Tea',115000,'images/foom_iced_tea.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Iced Lemon Tea -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_iced_temon_tea.jfif" alt="Foom Iced Lemon Tea" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Iced Lemon Tea</h3>
+                <p class="product-desc">Perpaduan teh dan lemon segar dengan sensasi dingin yang nikmat</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Iced Lemon Tea','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Iced Lemon Tea',115000,'images/foom_iced_temon_tea.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Foom Max Icy Watermelon -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_max_Icy_watermelon.jfif" alt="Foom Max Icy Watermelon" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Max Icy Watermelon</h3>
+                <p class="product-desc">Semangka segar dengan sentuhan ice yang memanjakan tenggorokan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Max Icy Watermelon','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Max Icy Watermelon',115000,'images/foom_max_Icy_watermelon.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Mix Berry Ice Cream -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_mix_berry_ice_cream.jfif" alt="Foom Mix Berry Ice Cream" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Mix Berry Ice Cream</h3>
+                <p class="product-desc">Campuran berry manis dalam sensasi es krim yang lembut dan creamy</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Mix Berry Ice Cream','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Mix Berry Ice Cream',115000,'images/foom_mix_berry_ice_cream.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. Passionfruit Mango Tea -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_passionfruit_mango_tea.jfif" alt="Foom Passionfruit Mango Tea" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Passionfruit Mango Tea</h3>
+                <p class="product-desc">Markisa tropis bertemu mangga ranum dalam sajian teh buah yang eksotis</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Passionfruit Mango Tea','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Passionfruit Mango Tea',115000,'images/foom_passionfruit_mango_tea.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. Red Apple -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_red_apple_.jfif" alt="Foom Red Apple" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Red Apple</h3>
+                <p class="product-desc">Rasa apel merah yang manis dan segar, cocok untuk semua kalangan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Red Apple','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Red Apple',115000,'images/foom_red_apple_.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. Sour Punch -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_sour_punch.jfif" alt="Flood Sour Punch" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Flood Sour Punch</h3>
+                <p class="product-desc">Sensasi asam segar yang meledak di mulut, unik dan bikin nagih</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Flood Sour Punch','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Flood Sour Punch',115000,'images/foom_sour_punch.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 13. Strawberry Mint -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_strawberrym_int.jfif" alt="Flood Strawberry Mint" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Flood Strawberry Mint</h3>
+                <p class="product-desc">Stroberi manis berpadu dengan mint segar yang bikin nagih setiap hisapan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Flood Strawberry Mint','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Flood Strawberry Mint',115000,'images/foom_strawberrym_int.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 14. Tropical Lime -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_tropical_lime.jfif" alt="Flood Tropical Lime" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Flood Tropical Lime</h3>
+                <p class="product-desc">Kesegaran lime tropis yang tajam dan menyegarkan di setiap hisapan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Flood Tropical Lime','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Flood Tropical Lime',115000,'images/foom_tropical_lime.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 15. Tropical Lychee -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_tropical_lychee.jfif" alt="Flood Tropical Lychee" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Flood Tropical Lychee</h3>
+                <p class="product-desc">Lychee tropis yang manis dan segar, memanjakan di setiap hisapan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Flood Tropical Lychee','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Flood Tropical Lychee',115000,'images/foom_tropical_lychee.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 16. Tropical Passionfruit -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_tropical_passionfruit.jfif" alt="Flood Tropical Passionfruit" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Flood Tropical Passionfruit</h3>
+                <p class="product-desc">Sensasi tropis buah passion yang segar dan penuh semangat</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Flood Tropical Passionfruit','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Flood Tropical Passionfruit',115000,'images/foom_tropical_passionfruit.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 17. Tropical Starfruit -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_tropical_tarfruit.jfif" alt="Flood Tropical Starfruit" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Flood Tropical Starfruit</h3>
+                <p class="product-desc">Rasa belimbing tropis yang unik, segar, dan bikin ketagihan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Flood Tropical Starfruit','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Flood Tropical Starfruit',115000,'images/foom_tropical_tarfruit.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 18. Vietnam Drip Coffee -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_vietnam_drip_coffee.jfif" alt="Foom Vietnam Drip Coffee" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Vietnam Drip Coffee</h3>
+                <p class="product-desc">Kopi vietnam drip yang kuat dan kaya rasa, sempurna untuk pecinta kopi</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Vietnam Drip Coffee','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Vietnam Drip Coffee',115000,'images/foom_vietnam_drip_coffee.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 19. Watermelon Bubblegum -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_watermelon_bubblegum.jpeg" alt="Foom Watermelon Bubblegum" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Watermelon Bubblegum</h3>
+                <p class="product-desc">Memadukan rasa manis nostalgia permen karet dengan kesegaran buah semangka yang juicy</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Watermelon Bubblegum','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Watermelon Bubblegum',115000,'images/foom_watermelon_bubblegum.jpeg',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 20. Matcha Latte -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_matcha_latte.jfif" alt="Foom Matcha Latte" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom Matcha Latte</h3>
+                <p class="product-desc">Kolaborasi dengan Boy William, cita rasa matcha autentik, lembut, dan menenangkan</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom Matcha Latte','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom Matcha Latte',115000,'images/foom_matcha_latte.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 21. Cappuccino x Boy William -->
+        <div class="product-card">
+            <div class="product-img"><img src="images/foom_x_boy_william_cappuciccino.jfif" alt="Foom x Boy William Cappuccino" style="width:100%;height:100%;object-fit:contain;padding:10px;"></div>
+            <div class="product-info">
+                <h3 class="product-name">Foom x Boy William Cappuccino</h3>
+                <p class="product-desc">Perpaduan rasa kopi cappuccino, susu creamy, dan sentuhan whip cream caramel</p>
+                <div class="product-price">Rp 115.000</div>
+                <div class="product-card-btns">
+                    <button class="btn-order" onclick="orderWA('Foom x Boy William Cappuccino','Rp 115.000')">🛒 Pesan</button>
+                    <button class="btn-add-cart" onclick="addCart('Foom x Boy William Cappuccino',115000,'images/foom_x_boy_william_cappuciccino.jfif',this)">+ Keranjang</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+    <div class="about-container">
+        <div class="about-content">
+            <h2>Tentang Steal Vape</h2>
+            <p>Steal Vape adalah toko vape terpercaya yang menyediakan produk-produk vape berkualitas tinggi dengan harga yang kompetitif.</p>
+            <p>Kami berkomitmen untuk memberikan pengalaman vaping terbaik dengan menyediakan berbagai pilihan device, liquid, dan aksesoris dari brand-brand ternama.</p>
+            <p>Dengan pelayanan profesional dan produk original, kami siap menjadi partner terpercaya untuk kebutuhan vaping Anda.</p>
+        </div>
+        <div class="about-img">
+            <img src="images_logo_steal_vape.jpg" alt="Steal Vape Logo" class="about-logo">
+        </div>
+    </div>
+</section>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/6282114723789?text=Halo%20Steal%20Vape%2C%20saya%20ingin%20bertanya%20tentang%20produk%20vape" target="_blank" class="whatsapp-float" title="Chat WhatsApp">
+    <svg viewBox="0 0 32 32"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-4.713 1.262 1.262-4.669-0.292-0.508c-1.207-2.100-1.847-4.507-1.847-6.967 0-7.51 6.11-13.62 13.62-13.62s13.62 6.11 13.62 13.62-6.11 13.62-13.62 13.62zM21.305 19.26c-0.346-0.174-2.049-1.007-2.366-1.123-0.316-0.117-0.547-0.174-0.776 0.174s-0.892 1.123-1.094 1.347c-0.201 0.229-0.401 0.257-0.748 0.083-0.346-0.174-1.461-0.539-2.785-1.722-1.031-0.922-1.727-2.061-1.929-2.407-0.201-0.346-0.022-0.532 0.152-0.704 0.156-0.155 0.346-0.401 0.518-0.603 0.174-0.201 0.229-0.346 0.346-0.575 0.117-0.229 0.058-0.429-0.028-0.603s-0.776-1.87-1.063-2.565c-0.28-0.672-0.56-0.58-0.776-0.591-0.201-0.010-0.429-0.012-0.659-0.012s-0.603 0.083-0.92 0.429c-0.316 0.346-1.206 1.179-1.206 2.873s1.235 3.333 1.406 3.561c0.174 0.229 2.421 3.698 5.863 5.186 0.818 0.354 1.456 0.565 1.953 0.722 0.821 0.262 1.569 0.225 2.16 0.136 0.659-0.099 2.049-0.837 2.335-1.645s0.287-1.501 0.201-1.645c-0.083-0.146-0.316-0.229-0.659-0.401z"/></svg>
+</a>
+
+<!-- FOOTER -->
+<footer id="contact">
+    <div class="footer-content">
+        <img src="images_logo_steal_vape.jpg" alt="Steal Vape Logo" class="footer-logo">
+        <h3 style="margin-bottom:1rem;font-size:1.5rem;">STEAL VAPE</h3>
+        <p>Premium Vape Store</p>
+        <p>📱 WhatsApp: +62 821-1472-3789</p>
+        <p>📧 Email: info@stealvape.com</p>
+        <div class="social-links">
+            <a href="https://wa.me/6282114723789" target="_blank">📱</a>
+            <a href="https://www.instagram.com/steal.vape/" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+        </div>
+        <p style="margin-top:2rem;opacity:0.5;">© 2026 Steal Vape. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+// ===== CART STATE =====
+let cart = [];
+
+// ===== ADD TO CART =====
+function addCart(name, price, img, btn) {
+    const idx = cart.findIndex(i => i.name === name);
+    if (idx > -1) {
+        cart[idx].qty += 1;
+    } else {
+        cart.push({ name, price, img, qty: 1 });
+    }
+    renderCart();
+    showToast('✅ ' + name + ' ditambahkan!');
+    btn.classList.add('added');
+    btn.textContent = '✓ Added';
+    setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+ Keranjang'; }, 1800);
+}
+
+// ===== CHANGE QTY =====
+function changeQty(idx, delta) {
+    cart[idx].qty += delta;
+    if (cart[idx].qty <= 0) cart.splice(idx, 1);
+    renderCart();
+}
+
+// ===== REMOVE ITEM =====
+function removeItem(idx) {
+    cart.splice(idx, 1);
+    renderCart();
+}
+
+// ===== CLEAR =====
+function clearCart() {
+    if (!confirm('Yakin mau kosongkan keranjang?')) return;
+    cart = [];
+    renderCart();
+}
+
+// ===== RENDER CART =====
+function renderCart() {
+    const body = document.getElementById('cartBody');
+    const foot = document.getElementById('cartFoot');
+    const badge = document.getElementById('cartBadge');
+    const headCount = document.getElementById('cartHeadCount');
+
+    const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+    const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+    badge.textContent = totalQty;
+    badge.style.display = totalQty > 0 ? 'flex' : 'none';
+    headCount.textContent = totalQty + ' item';
+
+    if (cart.length === 0) {
+        body.innerHTML = `
+            <div class="cart-empty">
+                <div class="cart-empty-ico">🛒</div>
+                <h3>Keranjang Masih Kosong</h3>
+                <p>Tambahkan produk ke keranjang untuk mulai belanja</p>
+            </div>`;
+        foot.style.display = 'none';
+        return;
+    }
+
+    foot.style.display = 'block';
+
+    let html = '';
+    cart.forEach((item, idx) => {
+        html += `
+        <div class="cart-item">
+            <div class="cart-item-thumb">
+                <img src="${item.img}" alt="${item.name}" onerror="this.parentElement.innerHTML='🛒'">
+            </div>
+            <div class="cart-item-body">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">Rp ${item.price.toLocaleString('id-ID')} / pcs</div>
+                <div class="cart-item-row">
+                    <div class="qty-wrap">
+                        <button class="qty-btn" onclick="changeQty(${idx},-1)">−</button>
+                        <span class="qty-val">${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${idx},1)">+</button>
+                    </div>
+                    <span class="cart-item-sub">Rp ${(item.price * item.qty).toLocaleString('id-ID')}</span>
+                </div>
+            </div>
+            <button class="cart-del-btn" onclick="removeItem(${idx})" title="Hapus">🗑️</button>
+        </div>`;
+    });
+
+    body.innerHTML = html;
+
+    document.getElementById('summaryItems').textContent = cart.length + ' produk';
+    document.getElementById('summaryQty').textContent = totalQty + ' pcs';
+    document.getElementById('summaryTotal').textContent = 'Rp ' + totalPrice.toLocaleString('id-ID');
+}
+
+// ===== OPEN / CLOSE CART =====
+function openCart() {
+    document.getElementById('cartSidebar').classList.add('open');
+    document.getElementById('cartOverlay').classList.add('open');
+}
+
+function closeCart() {
+    document.getElementById('cartSidebar').classList.remove('open');
+    document.getElementById('cartOverlay').classList.remove('open');
+}
+
+// ===== CHECKOUT WA =====
+function checkoutWA() {
+    if (cart.length === 0) return;
+
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+
+    let msg = 'Halo Steal Vape! 👋\n';
+    msg += 'Saya mau pesan produk berikut:\n\n';
+
+    cart.forEach((item, idx) => {
+        msg += `${idx + 1}. *${item.name}*\n`;
+        msg += `   • Jumlah  : ${item.qty} pcs\n`;
+        msg += `   • Harga   : Rp ${item.price.toLocaleString('id-ID')}\n`;
+        msg += `   • Subtotal: Rp ${(item.price * item.qty).toLocaleString('id-ID')}\n\n`;
+    });
+
+    msg += `━━━━━━━━━━━━━━━━━━\n`;
+    msg += `📦 Total Produk : ${cart.length} item (${totalQty} pcs)\n`;
+    msg += `💰 *TOTAL BAYAR : Rp ${total.toLocaleString('id-ID')}*\n\n`;
+    msg += `Mohon konfirmasi ketersediaan & info pengiriman.\nTerima kasih! 🙏`;
+
+    window.open('https://wa.me/6282114723789?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ===== SINGLE ORDER WA =====
+function orderWA(name, price) {
+    const msg = `Halo Steal Vape! 👋\nSaya mau pesan:\n📦 *${name}*\n💰 ${price}\n\nMohon konfirmasi ketersediaan. Terima kasih!`;
+    window.open('https://wa.me/6282114723789?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+    const t = document.getElementById('toastNotif');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
