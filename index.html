@@ -458,5 +458,21 @@ Harga paling masuk akal se-Atambua 🚀
     </footer>
 
     <script src="script.js"></script>
+    <button onclick="toggleCart()" style="position: fixed; top: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background: #e024a3; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+    🛒 Keranjang (<span id="cartCount">0</span>)
+</button>
+
+<div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header">
+        <h2>Keranjang Belanja</h2>
+        <button onclick="toggleCart()" class="close-btn">&times;</button>
+    </div>
+    <div id="cartItems" class="cart-items">
+        </div>
+    <div class="cart-footer">
+        <h3>Total: Rp <span id="cartTotal">0</span></h3>
+        <button onclick="checkoutWA()" class="checkout-btn">Beli via WhatsApp</button>
+    </div>
+</div>
 </body>
 </html>
